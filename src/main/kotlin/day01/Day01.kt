@@ -1,29 +1,27 @@
-val input: String = "199\n" +
-            "200\n" +
-            "208\n" +
-            "210\n" +
-            "200\n" +
-            "207\n" +
-            "240\n" +
-            "269\n" +
-            "260\n" +
-            "263"
+package day01
 
-fun numberOfIncreased(input: String) : Int {
-    val depthArray = input.split("\n").map { s -> s.toInt() }
-    val result = depthArray.foldIndexed(0) {index, count, depth ->
-            var result: Int = count
-            if (index > 0) {
-                val prevDepth = depthArray[index-1]
-                if (depth > prevDepth) result = count + 1
-            }
-            result
-        }
-    return result
+import java.io.File
+
+fun readFile(filename: String): String = File(filename).readText()
+
+fun readInput(filename: String): List<Int> = readFile(filename).split("\n").map { s -> s.toInt() }
+
+fun numberOfIncreased(depthArray: List<Int>) = depthArray.windowed(2, 1, false)
+    .map { pair -> pair[0] < pair[1] }
+    .map { increased -> if (increased) 1 else 0 }
+    .reduce { acc, next -> acc + next }
+
+fun numberOfIncreasedWithSlidingWindow(depthArray: List<Int>): Int {
+    val windowedDepthArray = depthArray.windowed(5, 1, false)
+        .map { window -> window.reduce { acc, next -> acc + next } }
+    return numberOfIncreased(windowedDepthArray)
 }
 
-fun main(args: Array<String>) {
+fun main() {
+    val input = readInput("src/main/resources/day01/part-1.txt")
     val count = numberOfIncreased(input)
     println("Day 1")
-    println("${count} measurements are larger than the previous measurement")
+    println("$count measurements are larger than the previous measurement")
+    val countWindows = numberOfIncreasedWithSlidingWindow(input)
+    println("$countWindows sums are larger than the previous sum")
 }
