@@ -8,28 +8,32 @@ fun readInput(fileName: String) : List<List<Int>> =
         .map { line -> line.toCharArray() }
         .map { charArray -> charArray.map { c -> c.toString().toInt() }}
 
+val oneIsSignificant: (Int) -> Int = { e -> e }
+val zeroIsSignificant: (Int) -> Int = { e -> if (e == 1) 0 else 1 }
+
 fun part1(input: List<List<Int>>): Int {
-    val gammaBits = toGammaBits(input)
-    val epsilonBits = gammaBits.map { element -> if (element == 1) 0 else 1 }
-    val gamma = toInt(gammaBits)
-    val epsilon = toInt(epsilonBits)
+    val gamma = powerRating(input, oneIsSignificant)
+    val epsilon = powerRating(input, zeroIsSignificant)
     return gamma * epsilon
 }
 
+fun powerRating(input: List<List<Int>>, bitCrit: (Int) -> Int) = toInt(significantBits(input,bitCrit))
+
 fun part2(input: List<List<Int>>): Int {
-    val oxygen = lifeSupportRating(input,0) { e -> e }
-    val co2 = lifeSupportRating(input,0) { e -> if (e == 1) 0 else 1 }
+    val oxygen = lifeSupportRating(input,0, oneIsSignificant)
+    val co2 = lifeSupportRating(input,0, zeroIsSignificant)
     return oxygen * co2
 }
 
 fun lifeSupportRating(input: List<List<Int>>, index: Int, bitCrit: (Int) -> Int): Int {
     if (input.size == 1) return toInt(input[0])
-    return lifeSupportRating(filter(input, index, toGammaBits(input).map(bitCrit)), index+1, bitCrit)
+    return lifeSupportRating(filter(input, index, significantBits(input, bitCrit)), index+1, bitCrit)
 }
 
-fun toGammaBits(input: List<List<Int>>) : List<Int> = input
+fun significantBits(input: List<List<Int>>, bitCrit: (Int) -> Int) : List<Int> = input
     .reduce{ acc, list -> acc.mapIndexed{ index, element -> element + list[index]} }
     .map { element -> if (element >= (input.size / 2.0)) 1 else 0 }
+    .map(bitCrit)
 
 fun filter(input: List<List<Int>>, index: Int, significantBits: List<Int>): List<List<Int>> {
     val value = significantBits[index]
