@@ -1,8 +1,6 @@
 package day01
 
-import java.io.File
-
-fun readFile(filename: String): String = File(filename).readText()
+import utils.readFile
 
 fun readInput(filename: String): List<Int> = readFile(filename).split("\n").map { s -> s.toInt() }
 

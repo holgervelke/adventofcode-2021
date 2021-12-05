@@ -1,8 +1,7 @@
 package day03
 
-import java.io.File
+import utils.readFile
 
-fun readFile(filename: String): String = File(filename).readText()
 fun readInput(fileName: String) : List<List<Int>> =
     readFile(fileName).split("\n")
         .map { line -> line.toCharArray() }

@@ -1,8 +1,7 @@
 package day02
 
-import java.io.File
+import utils.readFile
 
-fun readFile(filename: String): String = File(filename).readText()
 fun readInput(filename: String): List<Command> =
     readFile(filename).split("\n")
         .map { line -> line.split(" ") }
